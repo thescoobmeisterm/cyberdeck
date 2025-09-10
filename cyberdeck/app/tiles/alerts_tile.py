@@ -1,4 +1,5 @@
 from .base import Tile
+from app.alerts.ui import show_alerts_popup
 
 
 class AlertsTile(Tile):
@@ -10,3 +11,5 @@ class AlertsTile(Tile):
     def update(self, d):
         self.count += 1
         self.text = f"Alerts\n{self.count}"
+    def on_press(self):
+        show_alerts_popup()
