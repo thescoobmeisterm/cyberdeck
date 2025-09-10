@@ -5,9 +5,9 @@ Wants=network-online.target
 
 [Service]
 User=pi
-WorkingDirectory=/home/pi/cyberdeck
+WorkingDirectory=/home/pi/cyberdeck/cyberdeck
 Environment=PYTHONUNBUFFERED=1
-ExecStart=/home/pi/cyberdeck/.venv/bin/python -m app.main
+ExecStart=/home/pi/cyberdeck/cyberdeck/.venv/bin/python -m app.main
 Restart=on-failure
 
 [Install]
