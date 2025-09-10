@@ -17,6 +17,7 @@ from app.tiles.alerts_tile import AlertsTile
 from app.tiles.privacy_tile import PrivacyTile
 from app.tiles.env_tile import EnvTile
 from app.tiles.rules_tile import RulesTile
+from app.tiles.media_tile import MediaTile
 
 
 TILES = {
@@ -30,6 +31,7 @@ TILES = {
     "privacy": PrivacyTile,
     "env": EnvTile,
     "rules": RulesTile,
+    "media": MediaTile,
 }
 
 
@@ -46,6 +48,7 @@ class CyberdeckApp(App):
         # Export DB path for services/helpers
         try:
             os.environ["DECK_DB_PATH"] = os.path.expanduser(self.cfg["paths"]["db"])  # type: ignore[index]
+            os.environ["DECK_CONFIG_PATH"] = os.path.abspath("config/deck.yaml")
         except Exception:
             pass
         self.bus = Bus(self.cfg["mqtt"])

@@ -1,4 +1,5 @@
 from .base import Tile
+from app.network.ui import open_network_popup
 
 
 class NetworkTile(Tile):
@@ -11,3 +12,5 @@ class NetworkTile(Tile):
         ips = d.get("ips", {})
         ip = next(iter(ips.get("wlan0", []) or ips.get("eth0", []) or ["-"]))
         self.text = f"NET\n{ssid}\n{ip}"
+    def on_press(self):
+        open_network_popup(self.bus)

@@ -1,4 +1,5 @@
 from .base import Tile
+from app.jobs.ui import open_jobs_popup
 
 
 class JobsTile(Tile):
@@ -12,5 +13,4 @@ class JobsTile(Tile):
         status = "ok" if ok else ("err" if ok is False else "—")
         self.text = f"Jobs\n{name}: {status}"
     def on_press(self):
-        # Quick demo: trigger LAN scan
-        self.bus.pub("jobs/run", {"name": "lan_scan"})
+        open_jobs_popup(self.bus)

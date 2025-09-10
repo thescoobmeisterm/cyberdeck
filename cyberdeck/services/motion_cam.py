@@ -30,16 +30,22 @@ def main(device=0, width=1280, height=720, fps=30, sensitivity=0.6, min_area=800
     device, width, height, fps, sensitivity, min_area, preroll_s, postroll_s = load_settings()
     cli = mqtt.Client(); cli.connect("localhost",1883,60); cli.loop_start()
     privacy_on = False
+    last_frame = None
+    snap_request = False
     def on_msg(_c,_u,msg):
         nonlocal privacy_on
+        nonlocal snap_request
         if msg.topic == "privacy/state":
             try:
                 d = json.loads(msg.payload)
                 privacy_on = bool(d.get("on"))
             except Exception:
                 privacy_on = False
+        elif msg.topic == "cam/snap":
+            snap_request = True
     cli.on_message = on_msg
     cli.subscribe("privacy/state")
+    cli.subscribe("cam/snap")
     cap = cv2.VideoCapture(device)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
@@ -59,6 +65,7 @@ def main(device=0, width=1280, height=720, fps=30, sensitivity=0.6, min_area=800
     while True:
         ok, frame = cap.read()
         if not ok: time.sleep(0.1); continue
+        last_frame = frame
         fg = mog.apply(frame)
         cnts, _ = cv2.findContours(fg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         area = max((cv2.contourArea(c) for c in cnts), default=0)
@@ -82,6 +89,15 @@ def main(device=0, width=1280, height=720, fps=30, sensitivity=0.6, min_area=800
         # If in recording window, keep collecting frames
         if recording_until >= now:
             record_frames.append(frame.copy())
+        # Handle snapshot request
+        if snap_request and last_frame is not None:
+            snap_request = False
+            day_dir = media_root / "snap"
+            day_dir.mkdir(parents=True, exist_ok=True)
+            snap_path = day_dir / f"snap_{time.strftime('%Y%m%d_%H%M%S')}.jpg"
+            cv2.imwrite(str(snap_path), last_frame)
+            cli.publish("cam/snap_ok", json.dumps({"path": str(snap_path), "ts": time.time()}))
+
         # If window elapsed and we have frames, write to file
         if recording_until < now and record_frames:
             day_dir = media_root / "rec" / time.strftime("%Y-%m-%d")

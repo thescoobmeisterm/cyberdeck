@@ -13,7 +13,7 @@ sudo apt-get install -y \
   libatlas-base-dev libportaudio2 libsndfile1 \
   libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0 \
   libgl1 libgles2 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
-  nmap tcpdump
+  nmap tcpdump network-manager
 
 # Create venv that can see apt-installed site packages (e.g., cv2)
 if [ ! -d "$repo_dir/.venv" ]; then
