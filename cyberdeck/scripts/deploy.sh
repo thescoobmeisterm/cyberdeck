@@ -14,7 +14,7 @@ sudo systemctl enable mosquitto --now
 sudo ln -sf "$repo_dir/packaging/systemd/cyberdeck-app.service" /etc/systemd/system/
 sudo systemctl enable cyberdeck-app
 
-services=(sys_health audio_meter motion_cam net_mgr jobs_runner)
+services=(sys_health audio_meter motion_cam net_mgr jobs_runner logger)
 for s in "${services[@]}"; do
   sudo ln -sf "$repo_dir/packaging/systemd/cyberdeck-@.service" \
     "/etc/systemd/system/cyberdeck-$s.service"

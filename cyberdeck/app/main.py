@@ -12,6 +12,7 @@ from app.tiles.face_tile import FaceTile
 from app.alerts.engine import AlertEngine
 from app.tiles.network_tile import NetworkTile
 from app.tiles.jobs_tile import JobsTile
+from app.tiles.alerts_tile import AlertsTile
 
 
 TILES = {
@@ -21,6 +22,7 @@ TILES = {
     "face": FaceTile,
     "network": NetworkTile,
     "jobs": JobsTile,
+    "alerts": AlertsTile,
 }
 
 

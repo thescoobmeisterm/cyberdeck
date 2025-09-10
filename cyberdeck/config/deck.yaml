@@ -2,7 +2,7 @@ profile: Field
 ui:
   theme: dark
   grid: {cols: 2, rows: 3, gap_dp: 8}
-  tiles: [system, db_meter, motion, face, network, jobs]
+  tiles: [system, db_meter, motion, face, network, jobs, alerts]
 paths:
   db: "~/deck/db.sqlite"
   media: "~/deck/media"
