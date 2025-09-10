@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Resolve repository root (this script is at <repo>/scripts/install.sh)
+repo_dir=$(cd "$(dirname "$0")/.." && pwd)
+
 sudo apt-get update
 sudo apt-get install -y \
   python3-full python3-pip python3-venv \
@@ -11,14 +14,14 @@ sudo apt-get install -y \
   nmap tcpdump
 
 # Create venv that can see apt-installed site packages (e.g., cv2)
-if [ ! -d .venv ]; then
-  python3 -m venv .venv --system-site-packages
+if [ ! -d "$repo_dir/.venv" ]; then
+  python3 -m venv "$repo_dir/.venv" --system-site-packages
 fi
-source .venv/bin/activate
+source "$repo_dir/.venv/bin/activate"
 python -m pip install -U pip setuptools wheel
-pip install -r requirements.txt
+pip install -r "$repo_dir/requirements.txt"
 
-mkdir -p ~/deck/media ~/deck/state db
-sqlite3 ~/deck/db.sqlite < db/schema.sql
+mkdir -p ~/deck/media ~/deck/state "$repo_dir/db"
+sqlite3 ~/deck/db.sqlite < "$repo_dir/db/schema.sql"
 
-echo "Done. Enable services per README or run scripts/deploy.sh."
+echo "Done. Enable services per README or run $repo_dir/scripts/deploy.sh."
