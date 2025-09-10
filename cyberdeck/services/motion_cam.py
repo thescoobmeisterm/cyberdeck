@@ -7,6 +7,17 @@ import paho.mqtt.client as mqtt
 def main(device=0, width=1280, height=720, fps=30, sensitivity=0.6, min_area=800,
          preroll_s: int = 5, postroll_s: int = 10):
     cli = mqtt.Client(); cli.connect("localhost",1883,60); cli.loop_start()
+    privacy_on = False
+    def on_msg(_c,_u,msg):
+        nonlocal privacy_on
+        if msg.topic == "privacy/state":
+            try:
+                d = json.loads(msg.payload)
+                privacy_on = bool(d.get("on"))
+            except Exception:
+                privacy_on = False
+    cli.on_message = on_msg
+    cli.subscribe("privacy/state")
     cap = cv2.VideoCapture(device)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
@@ -34,7 +45,7 @@ def main(device=0, width=1280, height=720, fps=30, sensitivity=0.6, min_area=800
         ring.append(frame.copy())
 
         now = time.time()
-        if area > min_area and score >= sensitivity:
+        if not privacy_on and area > min_area and score >= sensitivity:
             payload = {"event":"motion","score": float(score), "ts": now}
             cli.publish("cam/motion", json.dumps(payload))
             last_trigger_ts = now

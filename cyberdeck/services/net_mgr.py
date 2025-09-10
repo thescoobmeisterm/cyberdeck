@@ -46,8 +46,23 @@ def main():
                 cli.publish("net/scan_result", json.dumps({"ok": False, "raw": e.output, "ts": time.time()}))
             except Exception as e:
                 cli.publish("net/scan_result", json.dumps({"ok": False, "raw": str(e), "ts": time.time()}))
+        elif msg.topic == "net/connect":
+            try:
+                d = json.loads(msg.payload)
+                ssid = d.get("ssid"); psk = d.get("psk")
+                if ssid and psk:
+                    # Use nmcli to connect
+                    subprocess.check_call(["nmcli", "dev", "wifi", "connect", ssid, "password", psk, "ifname", iface])
+                    cli.publish("net/connect_result", json.dumps({"ok": True, "ssid": ssid}))
+                else:
+                    cli.publish("net/connect_result", json.dumps({"ok": False, "error": "missing ssid/psk"}))
+            except subprocess.CalledProcessError as e:
+                cli.publish("net/connect_result", json.dumps({"ok": False, "error": str(e)}))
+            except Exception as e:
+                cli.publish("net/connect_result", json.dumps({"ok": False, "error": str(e)}))
     cli.on_message = on_msg
     cli.subscribe("net/scan")
+    cli.subscribe("net/connect")
     while True:
         payload = {
             "ips": get_ips(),

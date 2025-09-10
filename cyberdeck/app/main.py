@@ -14,6 +14,8 @@ from app.alerts.engine import AlertEngine
 from app.tiles.network_tile import NetworkTile
 from app.tiles.jobs_tile import JobsTile
 from app.tiles.alerts_tile import AlertsTile
+from app.tiles.privacy_tile import PrivacyTile
+from app.tiles.env_tile import EnvTile
 
 
 TILES = {
@@ -24,6 +26,8 @@ TILES = {
     "network": NetworkTile,
     "jobs": JobsTile,
     "alerts": AlertsTile,
+    "privacy": PrivacyTile,
+    "env": EnvTile,
 }
 
 
