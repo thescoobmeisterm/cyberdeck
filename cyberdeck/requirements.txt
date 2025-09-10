@@ -5,3 +5,5 @@ numpy
 sounddevice
 opencv-python
 pyyaml
+adafruit-circuitpython-busdevice
+adafruit-circuitpython-bme280

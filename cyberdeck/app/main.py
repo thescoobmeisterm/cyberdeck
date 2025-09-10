@@ -16,6 +16,7 @@ from app.tiles.jobs_tile import JobsTile
 from app.tiles.alerts_tile import AlertsTile
 from app.tiles.privacy_tile import PrivacyTile
 from app.tiles.env_tile import EnvTile
+from app.tiles.rules_tile import RulesTile
 
 
 TILES = {
@@ -28,6 +29,7 @@ TILES = {
     "alerts": AlertsTile,
     "privacy": PrivacyTile,
     "env": EnvTile,
+    "rules": RulesTile,
 }
 
 

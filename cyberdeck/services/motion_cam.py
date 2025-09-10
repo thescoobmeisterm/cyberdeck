@@ -1,11 +1,33 @@
-import cv2, time, json, os
+import cv2, time, json, os, yaml
 from collections import deque
 from pathlib import Path
 import paho.mqtt.client as mqtt
 
 
+def load_settings():
+    cfg_path = os.environ.get("DECK_CONFIG_PATH") or os.path.expanduser("config/deck.yaml")
+    try:
+        with open(cfg_path) as f:
+            cfg = yaml.safe_load(f) or {}
+    except Exception:
+        cfg = {}
+    cam = cfg.get("camera", {})
+    motion = (cam or {}).get("motion", {})
+    rec = (cam or {}).get("record", {})
+    device = cam.get("device", 0)
+    res = cam.get("res", [1280, 720])
+    fps = cam.get("fps", 30)
+    sensitivity = motion.get("sensitivity", 0.6)
+    min_area = motion.get("min_area", 800)
+    preroll_s = rec.get("preroll_s", 5)
+    postroll_s = rec.get("postroll_s", 10)
+    return device, int(res[0]), int(res[1]), int(fps), float(sensitivity), int(min_area), int(preroll_s), int(postroll_s)
+
+
 def main(device=0, width=1280, height=720, fps=30, sensitivity=0.6, min_area=800,
          preroll_s: int = 5, postroll_s: int = 10):
+    # Override defaults from YAML if available
+    device, width, height, fps, sensitivity, min_area, preroll_s, postroll_s = load_settings()
     cli = mqtt.Client(); cli.connect("localhost",1883,60); cli.loop_start()
     privacy_on = False
     def on_msg(_c,_u,msg):

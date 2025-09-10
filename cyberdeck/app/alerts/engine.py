@@ -1,12 +1,15 @@
-import ast, time, json, os, sqlite3
+import ast, time, json, os, sqlite3, yaml
 from .rules import compile_rules
 
 
 class AlertEngine:
     def __init__(self, bus, cfg):
         self.bus = bus
-        self.rules = compile_rules(cfg.get("rules", []))
+        self._config_path = os.path.expanduser("config/deck.yaml")
+        self._raw_rules = cfg.get("rules", [])
+        self.rules = compile_rules(self._raw_rules)
         self.bus.sub("#", self._eval)
+        self.bus.sub("alerts/rules/set", self._set_rules)
         # Prepare DB for alert inserts
         self._db_path = os.environ.get("DECK_DB_PATH") or os.path.expanduser("~/deck/db.sqlite")
         try:
@@ -36,3 +39,28 @@ class AlertEngine:
                     pass
                 for action in r["do"]:
                     self.bus.pub("alerts/exec", {"action": action, "ctx": ctx})
+
+    def _set_rules(self, _topic, payload):
+        try:
+            d = json.loads(payload)
+            new_rules = d.get("rules", [])
+        except Exception:
+            return
+        # Persist to YAML config
+        try:
+            with open(self._config_path) as f:
+                cfg = yaml.safe_load(f) or {}
+        except Exception:
+            cfg = {}
+        alerts = cfg.get("alerts") or {}
+        alerts["rules"] = new_rules
+        cfg["alerts"] = alerts
+        try:
+            with open(self._config_path, 'w') as f:
+                yaml.safe_dump(cfg, f, sort_keys=False)
+        except Exception:
+            pass
+        # Reload in-memory rules
+        self._raw_rules = new_rules
+        self.rules = compile_rules(self._raw_rules)
+        self.bus.pub("alerts/rules/ack", {"ok": True, "count": len(new_rules)})
