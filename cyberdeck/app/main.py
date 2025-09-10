@@ -10,6 +10,8 @@ from app.tiles.db_meter_tile import DbMeterTile
 from app.tiles.motion_tile import MotionTile
 from app.tiles.face_tile import FaceTile
 from app.alerts.engine import AlertEngine
+from app.tiles.network_tile import NetworkTile
+from app.tiles.jobs_tile import JobsTile
 
 
 TILES = {
@@ -17,6 +19,8 @@ TILES = {
     "db_meter": DbMeterTile,
     "motion": MotionTile,
     "face": FaceTile,
+    "network": NetworkTile,
+    "jobs": JobsTile,
 }
 
 
