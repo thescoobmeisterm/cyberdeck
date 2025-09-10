@@ -9,5 +9,5 @@ class NetworkTile(Tile):
     def update(self, d):
         ssid = (d.get("wifi") or {}).get("ssid") or "?"
         ips = d.get("ips", {})
-        ip = next(iter(ips.get("wlan0", []) or ips.get("eth0", []) or ["-"])))
+        ip = next(iter(ips.get("wlan0", []) or ips.get("eth0", []) or ["-"]))
         self.text = f"NET\n{ssid}\n{ip}"
