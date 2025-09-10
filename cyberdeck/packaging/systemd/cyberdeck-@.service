@@ -1,0 +1,13 @@
+[Unit]
+Description=Cyberdeck Service %i
+After=network-online.target mosquitto.service
+Wants=network-online.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/cyberdeck
+ExecStart=/usr/bin/python3 services/%i.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

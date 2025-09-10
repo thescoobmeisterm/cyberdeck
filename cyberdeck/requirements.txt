@@ -1,0 +1,7 @@
+kivy==2.3.0
+paho-mqtt
+psutil
+numpy
+sounddevice
+opencv-python
+pyyaml

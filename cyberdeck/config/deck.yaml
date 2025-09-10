@@ -1,0 +1,35 @@
+profile: Field
+ui:
+  theme: dark
+  grid: {cols: 2, rows: 3, gap_dp: 8}
+  tiles: [system, db_meter, motion, face]
+paths:
+  db: "~/deck/db.sqlite"
+  media: "~/deck/media"
+  state: "~/deck/state"
+mqtt:
+  host: "localhost"
+  port: 1883
+  base: ""
+alerts:
+  rules:
+    - if: "topic=='cam/motion' and hour>=22"
+      do: ["record:20", "tone:'beep'", "push:'Motion after hours'"]
+    - if: "topic=='audio/level' and payload.db > -30"
+      do: ["notify:'Loud noise'", "log"]
+audio:
+  samplerate: 48000
+  blocksize: 2048
+  db_ref: -37.5
+camera:
+  device: 0
+  res: [1280, 720]
+  fps: 30
+  motion:
+    method: "MOG2"
+    sensitivity: 0.6
+    min_area: 800
+face:
+  model: "hog"
+network:
+  iface: "wlan0"
