@@ -6,7 +6,7 @@ Wants=network-online.target
 [Service]
 User=pi
 WorkingDirectory=/home/pi/cyberdeck
-ExecStart=/usr/bin/python3 services/%i.py
+ExecStart=/home/pi/cyberdeck/.venv/bin/python services/%i.py
 Restart=on-failure
 
 [Install]
