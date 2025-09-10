@@ -9,6 +9,7 @@ sudo apt-get install -y \
   python3-full python3-pip python3-venv \
   python3-opencv ffmpeg mosquitto sqlite3 \
   mosquitto-clients iw alsa-utils \
+  wireless-tools \
   libatlas-base-dev libportaudio2 libsndfile1 \
   libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0 \
   libgl1 libgles2 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \

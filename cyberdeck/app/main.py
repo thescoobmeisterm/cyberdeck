@@ -2,6 +2,7 @@ from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.clock import Clock
 from kivy.lang import Builder
+import os
 
 from app.bus.mqtt_client import Bus
 from app.config import load_config
@@ -36,6 +37,11 @@ class CyberdeckApp(App):
         Builder.load_file("app/deck.kv")
 
         self.cfg = load_config()
+        # Export DB path for services/helpers
+        try:
+            os.environ["DECK_DB_PATH"] = os.path.expanduser(self.cfg["paths"]["db"])  # type: ignore[index]
+        except Exception:
+            pass
         self.bus = Bus(self.cfg["mqtt"])
         self.alerts = AlertEngine(self.bus, self.cfg.get("alerts", {}))
 

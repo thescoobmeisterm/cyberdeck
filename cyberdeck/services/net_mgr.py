@@ -36,6 +36,18 @@ def get_wifi_info(iface: str = "wlan0"):
 def main():
     cli = mqtt.Client(); cli.connect("localhost",1883,60); cli.loop_start()
     iface = "wlan0"
+    # Allow scan via MQTT command
+    def on_msg(_c,_u,msg):
+        if msg.topic == "net/scan":
+            try:
+                out = subprocess.check_output(["iw", "dev", iface, "scan"], stderr=subprocess.STDOUT, text=True, timeout=10)
+                cli.publish("net/scan_result", json.dumps({"ok": True, "raw": out, "ts": time.time()}))
+            except subprocess.CalledProcessError as e:
+                cli.publish("net/scan_result", json.dumps({"ok": False, "raw": e.output, "ts": time.time()}))
+            except Exception as e:
+                cli.publish("net/scan_result", json.dumps({"ok": False, "raw": str(e), "ts": time.time()}))
+    cli.on_message = on_msg
+    cli.subscribe("net/scan")
     while True:
         payload = {
             "ips": get_ips(),
